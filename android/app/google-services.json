@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "808501645356",
+    "project_id": "pet-supplies-app-ab38a",
+    "storage_bucket": "pet-supplies-app-ab38a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:808501645356:android:12f3b02a210a771b3dc189",
+        "android_client_info": {
+          "package_name": "com.example.pet_supplies_app_v2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCSXjlO8Tv5u8q6bZ8psfSXZ0njL1LUaA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
