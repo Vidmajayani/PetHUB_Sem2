@@ -1,0 +1,35 @@
+[
+  {
+    "id": "offline_1",
+    "category": "Dogs",
+    "subcategory": "Puppies",
+    "name": "Golden Retriever Pup",
+    "description": "A friendly and energetic Golden Retriever puppy, perfect for families. This is a built-in offline product.",
+    "price": 850.0,
+    "image": "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=400",
+    "rating": 4.9,
+    "specialFeatures": "Built-in Sample Data"
+  },
+  {
+    "id": "offline_2",
+    "category": "Cats",
+    "subcategory": "Kittens",
+    "name": "British Shorthair",
+    "description": "Quiet, calm, and very affectionate. Excellent for indoor living. This is a built-in offline product.",
+    "price": 600.0,
+    "image": "https://images.unsplash.com/photo-1513245543132-31f507417b26?auto=format&fit=crop&q=80&w=400",
+    "rating": 4.8,
+    "specialFeatures": "Built-in Sample Data"
+  },
+  {
+    "id": "offline_3",
+    "category": "Birds",
+    "subcategory": "Parrots",
+    "name": "Blue Parakeet",
+    "description": "Active and colorful bird that loves to chirp and interact. This is a built-in offline product.",
+    "price": 45.0,
+    "image": "https://images.unsplash.com/photo-1522850935326-6379895c957a?auto=format&fit=crop&q=80&w=400",
+    "rating": 4.7,
+    "specialFeatures": "Built-in Sample Data"
+  }
+]
