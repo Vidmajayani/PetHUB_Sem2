@@ -2,13 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/product_model.dart';
 import '../services/api_service.dart';
-import '../services/local_storage_service.dart';
 import '../services/connectivity_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ProductsProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
-  final LocalStorageService _storageService = LocalStorageService();
   final ConnectivityService _connectivityService = ConnectivityService();
 
   List<Product> _products = [];
@@ -27,7 +25,7 @@ class ProductsProvider with ChangeNotifier {
     _initConnectivityListener();
   }
 
-  /// Load products - fetch from API if online, load from cache if offline
+  /// Load products - fetch from API if online, load from built-in assets if offline
   Future<void> loadProducts() async {
     _setLoading(true);
     _errorMessage = null;
@@ -38,57 +36,37 @@ class ProductsProvider with ChangeNotifier {
       _isOffline = !isOnline;
 
       if (isOnline) {
-        // Online: Fetch from both sources
-        print('📡 Online - Fetching products from API and Public Source...');
-        
-        // 1. Fetch main products (External JSON requirement)
+        // Online: Fetch from External GitHub JSON (Requirement)
+        print('-------------------------------------------');
+        print('🌐 NETWORK: ONLINE');
+        print('📥 FETCHING: Products from GitHub (External JSON)');
+        print('-------------------------------------------');
+
         final fetchedProducts = await _apiService.fetchProducts();
-        
-        // 2. Fetch public API products (Public API requirement)
-        final publicApiProducts = await _apiService.fetchExoticPetsApi();
-        
-        // Combine them
-        _products = [...fetchedProducts, ...publicApiProducts];
-        
-        // Save to local storage for offline use
-        await _storageService.saveProducts(_products);
-        
-        print('✅ Loaded ${_products.length} total products (JSON + Public API)');
+        _products = fetchedProducts;
+        print('✅ SUCCESS: Loaded ${_products.length} products from GitHub!');
+        print('🔥 BEST SELLERS: derived from GitHub data (First 6 items)');
       } else {
-        // LAYER 2: Offline - Load from cache
-        print('📴 Offline - Loading products from cache...');
-        final cachedProducts = await _storageService.loadProducts();
+        // Offline Mode (Requirement: Local JSON Folder)
+        print('-------------------------------------------');
+        print('⚠️ NETWORK: OFFLINE');
+        print('📂 REDIRECT: Loading from Local JSON (Assets/Data)');
+        print('-------------------------------------------');
+
+        final assetProducts = await _apiService.fetchOfflineProducts();
         
-        if (cachedProducts.isEmpty) {
-          // LAYER 3: Final Fallback - Load from Built-in JSON Asset
-          print('📦 Cache empty - Loading from built-in JSON asset...');
-          final assetProducts = await _apiService.fetchOfflineProducts();
-          if (assetProducts.isNotEmpty) {
-            _products = assetProducts;
-            print('✅ Loaded ${_products.length} products from built-in asset');
-          } else {
-            _errorMessage = 'No products available. Please connect to the internet.';
-          }
+        if (assetProducts.isNotEmpty) {
+          _products = assetProducts;
+          print('✅ SUCCESS: Loaded ${_products.length} local products!');
+          print('🔥 BEST SELLERS: derived from Local JSON data (First 6 items)');
         } else {
-          _products = cachedProducts;
-          print('✅ Loaded ${_products.length} products from cache');
+          _errorMessage = 'No offline data found in assets/data/';
+          print('❌ ERROR: Could not find local products.json');
         }
       }
     } catch (e) {
       print('❌ Error loading products: $e');
       _errorMessage = 'Failed to load products: $e';
-      
-      // Try loading from cache as fallback
-      try {
-        final cachedProducts = await _storageService.loadProducts();
-        if (cachedProducts.isNotEmpty) {
-          _products = cachedProducts;
-          _errorMessage = 'Using cached data (Error: $e)';
-          print('⚠️ Loaded ${_products.length} products from cache (fallback)');
-        }
-      } catch (cacheError) {
-        print('❌ Cache fallback also failed: $cacheError');
-      }
     } finally {
       _setLoading(false);
     }
