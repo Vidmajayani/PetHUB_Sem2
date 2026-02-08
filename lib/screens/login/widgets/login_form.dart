@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
+import '../../../providers/auth_provider.dart';
+
+import '../../../widgets/common/error_notification_box.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -14,6 +16,7 @@ class _LoginFormState extends State<LoginForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  String? _errorMessage; // Add error state
 
   @override
   void dispose() {
@@ -23,8 +26,12 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   Future<void> _handleLogin() async {
+    // Clear previous error
+    setState(() => _errorMessage = null);
+
     if (_formKey.currentState!.validate()) {
       final auth = Provider.of<AuthProvider>(context, listen: false);
+      
       final error = await auth.login(
         _emailController.text.trim(),
         _passwordController.text.trim(),
@@ -32,13 +39,8 @@ class _LoginFormState extends State<LoginForm> {
 
       if (mounted) {
         if (error != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(error),
-              backgroundColor: Theme.of(context).colorScheme.error,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+          // Set error message to display in the box
+          setState(() => _errorMessage = error);
         } else {
           Navigator.pushReplacementNamed(context, '/nav');
         }
@@ -55,6 +57,12 @@ class _LoginFormState extends State<LoginForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Error Message Component
+          ErrorNotificationBox(
+            errorMessage: _errorMessage,
+            onClose: () => setState(() => _errorMessage = null),
+          ),
+            
           // Email Field
           TextFormField(
             controller: _emailController,

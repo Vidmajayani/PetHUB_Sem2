@@ -30,7 +30,7 @@ class RegisterScreen extends StatelessWidget {
                         Expanded(
                           flex: 1,
                           child: Image.asset(
-                            'assets/images/login_banner.png', // Reusing same banner for consistency
+                            'assets/images/pets_footer.png', 
                             height: 400,
                             fit: BoxFit.contain,
                           ),
@@ -57,8 +57,8 @@ class RegisterScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
-                          'assets/images/login_banner.png',
-                          width: 180,
+                          'assets/images/pets_footer.png',
+                          width: 220,
                           fit: BoxFit.contain,
                         ),
                         const SizedBox(height: 10),

@@ -72,20 +72,43 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  // Helper to map Firebase errors to friendly messages
+  String _handleAuthError(FirebaseAuthException e) {
+    switch (e.code) {
+      case 'invalid-email':
+        return 'The email address is invalid.';
+      case 'user-disabled':
+        return 'This user account has been disabled.';
+      case 'user-not-found':
+        return 'No account found with this email.';
+      case 'wrong-password':
+        return 'Incorrect password. Please try again.';
+      case 'email-already-in-use':
+        return 'This email is already registered.';
+      case 'weak-password':
+        return 'The password is too weak.';
+      case 'operation-not-allowed':
+        return 'Operation not allowed. Please contact support.';
+      default:
+        return e.message ?? 'Authentication failed. Please try again.';
+    }
+  }
+
   // Login
   Future<String?> login(String email, String password) async {
     _setLoading(true);
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
+      // Fetch user profile only after successful login
       await fetchUserProfile();
       _setLoading(false);
       return null; // Success
     } on FirebaseAuthException catch (e) {
       _setLoading(false);
-      return e.message ?? "Authentication failed";
+      return _handleAuthError(e);
     } catch (e) {
       _setLoading(false);
-      return "An unknown error occurred";
+      return "An unknown error occurred. Please check your connection.";
     }
   }
 
@@ -93,8 +116,8 @@ class AuthProvider with ChangeNotifier {
   Future<String?> register({
     required String email, 
     required String password, 
-    required String displayName,
-    required String phoneNumber,
+    required String displayName, 
+    required String phoneNumber, 
     required String address,
   }) async {
     _setLoading(true);
@@ -126,10 +149,10 @@ class AuthProvider with ChangeNotifier {
       return null; // Success
     } on FirebaseAuthException catch (e) {
       _setLoading(false);
-      return e.message ?? "Registration failed";
+      return _handleAuthError(e);
     } catch (e) {
       _setLoading(false);
-      return "An unknown error occurred";
+      return "An unknown error occurred. Please check your connection.";
     }
   }
   
