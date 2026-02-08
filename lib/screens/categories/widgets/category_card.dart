@@ -117,7 +117,7 @@ class _CategoryCardState extends State<CategoryCard> with TickerProviderStateMix
             ],
           ),
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -134,19 +134,26 @@ class _CategoryCardState extends State<CategoryCard> with TickerProviderStateMix
                   child: Hero(
                     tag: 'category-${widget.categoryName}',
                     child: Container(
-                      width: 90,
-                      height: 90,
+                      width: 85,
+                      height: 85,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
-                          colors: [
-                            colorScheme.primary.withOpacity(0.3),
-                            colorScheme.primaryContainer.withOpacity(0.6),
-                          ],
+                          colors: isDark 
+                            ? [
+                                colorScheme.primary.withOpacity(0.15),
+                                colorScheme.surfaceContainerHighest.withOpacity(0.8),
+                              ]
+                            : [
+                                colorScheme.primary.withOpacity(0.3),
+                                colorScheme.primaryContainer.withOpacity(0.6),
+                              ],
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: colorScheme.primary.withOpacity(0.4),
+                            color: isDark 
+                              ? Colors.black.withOpacity(0.3)
+                              : colorScheme.primary.withOpacity(0.3),
                             blurRadius: 16,
                             offset: const Offset(0, 4),
                           ),
@@ -155,13 +162,13 @@ class _CategoryCardState extends State<CategoryCard> with TickerProviderStateMix
                       child: Center(
                         child: Text(
                           widget.emoji,
-                          style: const TextStyle(fontSize: 48),
+                          style: const TextStyle(fontSize: 40),
                         ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 4),
                 
                 // Category Name - CENTERED
                 Text(
@@ -170,7 +177,7 @@ class _CategoryCardState extends State<CategoryCard> with TickerProviderStateMix
                         fontWeight: FontWeight.w800,
                         color: colorScheme.onSurface,
                         letterSpacing: 0.5,
-                        fontSize: 18,
+                        fontSize: 17,
                       ),
                   textAlign: TextAlign.center,
                   maxLines: 1,

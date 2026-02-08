@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../models/product_model.dart';
-import '../../providers/wishlist_provider.dart';
+import 'package:pet_supplies_app_v2/models/product_model.dart';
+import 'package:pet_supplies_app_v2/providers/wishlist_provider.dart';
+import 'package:pet_supplies_app_v2/providers/products_provider.dart';
+import 'package:pet_supplies_app_v2/widgets/offline_dialog.dart';
+import 'widgets/product_image_widget.dart';
 
 class ProductCard extends StatefulWidget {
   final Product product;
@@ -38,7 +41,6 @@ class _ProductCardState extends State<ProductCard> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final colorScheme = Theme.of(context).colorScheme;
 
     final backgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final textColor = isDark ? Colors.white : Colors.black;
@@ -92,7 +94,7 @@ class _ProductCardState extends State<ProductCard> with SingleTickerProviderStat
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
-                                child: _buildImage(),
+                                child: ProductImageWidget(imageUrl: widget.product.image),
                               ),
                             ),
                           ),
@@ -141,19 +143,38 @@ class _ProductCardState extends State<ProductCard> with SingleTickerProviderStat
                   ),
                   // Favorite Button
                   Positioned(
-                    top: 0,
-                    right: 0,
-                    child: IconButton(
-                      iconSize: 20,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      icon: Icon(
-                        isFavorite ? Icons.favorite : Icons.favorite_border,
-                        color: isFavorite ? Colors.red : colorScheme.onSurfaceVariant,
+                    top: 4,
+                    right: 4,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.9),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      onPressed: () {
-                        wishlist.toggleFavorite(widget.product);
-                      },
+                      child: IconButton(
+                        iconSize: 20,
+                        padding: const EdgeInsets.all(6),
+                        constraints: const BoxConstraints(),
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.red : Colors.black87,
+                        ),
+                        onPressed: () {
+                          final productsProvider = Provider.of<ProductsProvider>(context, listen: false);
+                          if (productsProvider.isOffline) {
+                            print('⚠️ BLOCKED: User tried to favorite item while OFFLINE');
+                            OfflineDialog.show(context, "favorite items");
+                            return;
+                          }
+                          wishlist.toggleFavorite(widget.product);
+                        },
+                      ),
                     ),
                   ),
                 ],
@@ -163,42 +184,5 @@ class _ProductCardState extends State<ProductCard> with SingleTickerProviderStat
         );
       },
     );
-  }
-
-  /// Build image widget - handles both asset paths and network URLs
-  Widget _buildImage() {
-    // Check if image is a network URL
-    if (widget.product.image.startsWith('http://') || widget.product.image.startsWith('https://')) {
-      return Image.network(
-        widget.product.image,
-        fit: BoxFit.cover,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Center(
-            child: CircularProgressIndicator(
-              value: loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                  : null,
-            ),
-          );
-        },
-        errorBuilder: (context, error, stackTrace) {
-          return const Center(
-            child: Icon(Icons.pets, size: 48, color: Colors.grey),
-          );
-        },
-      );
-    } else {
-      // Asset image
-      return Image.asset(
-        widget.product.image,
-        fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) {
-          return const Center(
-            child: Icon(Icons.pets, size: 48, color: Colors.grey),
-          );
-        },
-      );
-    }
   }
 }

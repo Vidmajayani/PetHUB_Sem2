@@ -36,18 +36,17 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       {'name': 'Hamsters', 'icon': Icons.cruelty_free, 'emoji': '🐹'},
       {'name': 'Rabbits', 'icon': Icons.cruelty_free, 'emoji': '🐰'},
       {'name': 'Turtles', 'icon': Icons.waves, 'emoji': '🐢'},
-      {'name': 'Exotic Pets', 'icon': Icons.star, 'emoji': '🦄'},
     ];
+
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Categories'),
         actions: [
-          // Offline indicator
           if (productsProvider.isOffline)
             const Padding(
               padding: EdgeInsets.only(right: 8.0),
-              child: Icon(Icons.cloud_off, color: Colors.orange),
+              child: Icon(Icons.cloud_off, color: Colors.red),
             ),
           IconButton(
             icon: const Icon(Icons.shopping_cart),
@@ -57,30 +56,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       ),
       body: Column(
         children: [
-          // Offline Banner
-          if (productsProvider.isOffline)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-              color: Colors.orange.shade100,
-              child: Row(
-                children: [
-                  Icon(Icons.cloud_off, size: 16, color: Colors.orange.shade900),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Offline - Showing cached data',
-                      style: TextStyle(
-                        color: Colors.orange.shade900,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
           // Categories Grid
           Expanded(
             child: productsProvider.isLoading

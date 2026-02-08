@@ -34,6 +34,23 @@ class ReviewService {
     }
   }
 
+  /// Get all reviews submitted by a specific user
+  Future<List<ReviewModel>> getReviewsByUserId(String userId) async {
+    try {
+      final querySnapshot = await _reviewsCollection
+          .where('userId', isEqualTo: userId)
+          .orderBy('date', descending: true)
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) => ReviewModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+          .toList();
+    } catch (e) {
+      print('Error fetching user reviews: $e');
+      return [];
+    }
+  }
+
   /// Check if a user has already reviewed a product
   Future<bool> hasUserReviewedProduct(String userId, String productId) async {
     try {
