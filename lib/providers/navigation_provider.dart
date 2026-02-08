@@ -13,7 +13,9 @@ class NavigationProvider extends ChangeNotifier {
   // Helper methods for semantic navigation
   void goToHome() => setTab(0);
   void goToCategories() => setTab(1);
-  void goToWishlist() => setTab(2);
-  void goToCart() => setTab(3);
-  void goToProfile() => setTab(4);
+  void goToServices() => setTab(2);
+  void goToWishlist() => setTab(3);
+  void goToCart() => setTab(4);
+  void goToProfile() => setTab(5);
+
 }

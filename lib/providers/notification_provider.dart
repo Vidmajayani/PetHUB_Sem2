@@ -91,6 +91,21 @@ class NotificationProvider with ChangeNotifier {
     }, SetOptions(merge: true));
   }
 
+  /// Shows an in-app banner ONLY. 
+  /// Does NOT save to history and does NOT send a system alert.
+  void showTemporaryBanner({required String title, required String message}) {
+    final notification = NotificationModel(
+      id: const Uuid().v4(),
+      title: title,
+      message: message,
+      timestamp: DateTime.now(),
+    );
+
+    // Broadcast ONLY for the in-app overlay
+    _notificationStreamController.add(notification);
+  }
+
+
   final Set<int> _triggeredThresholds = {};
 
   void checkCartReminder(int itemCount) {
