@@ -102,16 +102,16 @@ class _PetVideoSectionState extends State<PetVideoSection> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.black.withOpacity(0.3),
+              Colors.black.withOpacity(0.7), // Darker at top for readability
               Colors.transparent,
-              Colors.black.withOpacity(0.6),
+              Colors.black.withOpacity(0.3),
             ],
           ),
         ),
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start, // Moved to top
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

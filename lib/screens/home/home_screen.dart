@@ -10,7 +10,8 @@ import 'components/home_categories.dart';
 import 'components/home_promo_banner.dart';
 import 'components/best_sellers.dart';
 import 'components/home_footer.dart';
-import 'components/home_banner_slider.dart';
+
+import 'components/home_notification_button.dart';
 import 'components/pet_video_section.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -33,50 +34,7 @@ class HomeScreen extends StatelessWidget {
         ),
         centerTitle: false,
         actions: [
-          Consumer<NotificationProvider>(
-            builder: (context, provider, child) {
-              final unreadCount = provider.unreadCount;
-              return Stack(
-                alignment: Alignment.center,
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      unreadCount > 0 ? Icons.notifications_active : Icons.notifications_none,
-                      color: Colors.white,
-                      size: 28,
-                    ),
-                    onPressed: () => Navigator.pushNamed(context, '/notifications'),
-                  ),
-                  if (unreadCount > 0)
-                    Positioned(
-                      right: 8,
-                      top: 10,
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.deepPurple, width: 1.5),
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 16,
-                          minHeight: 16,
-                        ),
-                        child: Text(
-                          '$unreadCount',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                ],
-              );
-            },
-          ),
+          const HomeNotificationButton(),
           IconButton(
             icon: const Icon(Icons.account_circle, color: Colors.white, size: 28),
             onPressed: () => Navigator.pushNamed(context, '/profile'),
@@ -92,15 +50,15 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 8),
             const HomeSearch(),
             const PetVideoSection(),
-            const SizedBox(height: 12),
-
-            // new animated banner section
-            const HomeBannerSlider(),
+            const SizedBox(height: 20),
+            const HomeCategories(),
             const SizedBox(height: 20),
 
+
+
             const PetSection(),
-            const HomeCategories(),
             const SizedBox(height: 12),
+
             const HomePromoBanner(),
             const SizedBox(height: 20),
             BestSellers(products: products),

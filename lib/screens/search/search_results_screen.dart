@@ -4,6 +4,9 @@ import '../../models/product_model.dart';
 import '../../providers/products_provider.dart';
 import '../products/product_card.dart';
 import '../product_details/product_details_screen.dart';
+import 'widgets/no_search_results.dart';
+import 'widgets/service_promo_card.dart';
+import 'widgets/search_section_title.dart';
 
 class SearchResultsScreen extends StatelessWidget {
   final String query;
@@ -16,15 +19,20 @@ class SearchResultsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productsProvider = Provider.of<ProductsProvider>(context);
+    
+    // 1. Search Products
     final allProducts = productsProvider.products;
-
-    // Filter products by query (name, description, or category)
     final filteredProducts = allProducts.where((p) {
       final searchLower = query.toLowerCase();
       return p.name.toLowerCase().contains(searchLower) ||
           p.description.toLowerCase().contains(searchLower) ||
           p.category.toLowerCase().contains(searchLower);
     }).toList();
+
+    // 2. Search Services (Keyword Matching for Recommendations)
+    final searchLower = query.toLowerCase();
+    final List<String> commonServices = ['grooming', 'vet', 'doctor', 'consultation', 'advice', 'training'];
+    bool queryMatchesServices = commonServices.any((s) => searchLower.contains(s));
 
     return Scaffold(
       appBar: AppBar(
@@ -33,84 +41,60 @@ class SearchResultsScreen extends StatelessWidget {
           children: [
             Text('Search: "$query"', style: const TextStyle(fontSize: 18)),
             Text(
-              '${filteredProducts.length} ${filteredProducts.length == 1 ? 'item' : 'items'} found',
+              '${filteredProducts.length} results found',
               style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
             ),
           ],
         ),
       ),
-      body: filteredProducts.isEmpty
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.search_off_rounded,
-                        size: 80,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'No results found',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
+      body: (filteredProducts.isEmpty && !queryMatchesServices)
+          ? const NoSearchResults()
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (queryMatchesServices) ...[
+                    const SearchSectionTitle(title: "Recommended Services 🏥", icon: Icons.bolt_rounded),
                     const SizedBox(height: 12),
-                    Text(
-                      'Search for something else like "Dog" or "Food"',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                    ),
-                    const SizedBox(height: 32),
-                    FilledButton.tonalIcon(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.arrow_back),
-                      label: const Text('Try Again'),
+                    const ServicePromoCard(),
+                    const SizedBox(height: 24),
+                  ],
+                  if (filteredProducts.isNotEmpty) ...[
+                    const SearchSectionTitle(title: "Matching Products 🛒", icon: Icons.shopping_bag_outlined),
+                    const SizedBox(height: 16),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 16,
+                        crossAxisSpacing: 16,
+                        childAspectRatio: 0.75,
+                      ),
+                      itemCount: filteredProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = filteredProducts[index];
+                        return ProductCard(
+                          product: product,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductDetailsScreen(
+                                  product: product,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
                   ],
-                ),
-              ),
-            )
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.75,
-                ),
-                itemCount: filteredProducts.length,
-                itemBuilder: (context, index) {
-                  final product = filteredProducts[index];
-                  return ProductCard(
-                    product: product,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductDetailsScreen(
-                            product: product,
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
+                ],
               ),
             ),
     );
   }
 }
+

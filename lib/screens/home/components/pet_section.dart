@@ -6,11 +6,11 @@ class PetSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Fixed colors
-    const Color sectionBackground = Color.fromARGB(255, 219, 170, 249);
-    const Color buttonColor = Color.fromARGB(255, 151, 18, 246);
+    // Updated Premium Colors
+    final Color csPrimary = Theme.of(context).colorScheme.primary;
+    final Color csSecondary = Theme.of(context).colorScheme.secondary;
     const Color buttonTextColor = Colors.white;
-    const Color textColor = Colors.black87;
+    const Color textColor = Colors.white;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -38,23 +38,43 @@ class PetSection extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: buttonColor,
-                foregroundColor: buttonTextColor,
+                backgroundColor: Colors.white,
+                foregroundColor: csPrimary,
+                elevation: 4,
+                shadowColor: Colors.black45,
                 padding: const EdgeInsets.symmetric(
-                  vertical: 15,
-                  horizontal: 30,
+                  vertical: 18,
+                  horizontal: 36,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              child: const Text("Start Shopping"),
+              child: const Text(
+                "Start Shopping",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
             ),
           ],
         );
 
         return Container(
-          color: sectionBackground,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [csPrimary, csSecondary],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: csPrimary.withOpacity(0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          margin: const EdgeInsets.symmetric(horizontal: 16),
           padding: EdgeInsets.symmetric(
             vertical: 40,
             horizontal: isMobile ? 20 : 40,

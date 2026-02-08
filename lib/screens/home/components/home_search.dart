@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../search/search_results_screen.dart';
+import 'package:pet_supplies_app_v2/providers/products_provider.dart';
+import 'package:pet_supplies_app_v2/widgets/offline_dialog.dart';
 
 class HomeSearch extends StatefulWidget {
   const HomeSearch({super.key});
@@ -14,6 +17,8 @@ class _HomeSearchState extends State<HomeSearch> {
     'Search pets...',
     'Search for dog food...',
     'Find new toys...',
+    'Need a Vet consultation?',
+    'Book a Grooming session...',
     'Explore exotic friends...',
   ];
 
@@ -83,37 +88,53 @@ class _HomeSearchState extends State<HomeSearch> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final isOffline = Provider.of<ProductsProvider>(context).isOffline;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: TextField(
-        onSubmitted: (value) {
-          if (value.trim().isNotEmpty) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SearchResultsScreen(query: value.trim()),
+      child: GestureDetector(
+        onTap: isOffline 
+          ? () => OfflineDialog.show(context, "use search features") 
+          : null,
+        child: AbsorbPointer(
+          absorbing: isOffline,
+          child: TextField(
+            onSubmitted: (value) {
+              if (value.trim().isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SearchResultsScreen(query: value.trim()),
+                  ),
+                );
+              }
+            },
+            style: TextStyle(color: isOffline ? Colors.grey : null),
+            decoration: InputDecoration(
+              hintText: isOffline ? "Search Disabled (Offline)" : _currentHint,
+              prefixIcon: Icon(Icons.search, color: isOffline ? Colors.grey : null),
+              filled: true,
+              fillColor: cs.surface,
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: isOffline ? Colors.grey.withOpacity(0.3) : cs.primary.withOpacity(0.5), 
+                  width: 1.5
+                ),
               ),
-            );
-          }
-        },
-        decoration: InputDecoration(
-          hintText: _currentHint,
-          prefixIcon: const Icon(Icons.search),
-          filled: true,
-          fillColor: cs.surface,
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: cs.primary.withOpacity(0.5), width: 1.5),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: isOffline ? Colors.grey : cs.primary, 
+                  width: 2.0
+                ),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            ),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: cs.primary, width: 2.0),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         ),
       ),
     );

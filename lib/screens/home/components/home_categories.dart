@@ -9,32 +9,40 @@ class HomeCategories extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categories = [
-      {'image': 'assets/images/dog.png', 'label': 'Dogs'},
-      {'image': 'assets/images/cat.png', 'label': 'Cats'},
-      {'image': 'assets/images/bird.png', 'label': 'Birds'},
-      {'image': 'assets/images/fish.png', 'label': 'Fish'},
-      {'image': 'assets/images/reptile.png', 'label': 'Reptiles'},
-      {'image': 'assets/images/hamster.png', 'label': 'Hamsters'},
-      {'image': 'assets/images/rabbit.png', 'label': 'Rabbits'},
-      {'image': 'assets/images/turtle.png', 'label': 'Turtles'},
-      {'image': 'assets/images/dog.png', 'label': 'Exotic Pets'}, // Placeholder icon
+      {'icon': '🐶', 'label': 'Dogs'},
+      {'icon': '🐱', 'label': 'Cats'},
+      {'icon': '🐦', 'label': 'Birds'},
+      {'icon': '🐠', 'label': 'Fish'},
+      {'icon': '🦎', 'label': 'Reptiles'},
+      {'icon': '🐹', 'label': 'Hamsters'},
+      {'icon': '🐰', 'label': 'Rabbits'},
+      {'icon': '🐢', 'label': 'Turtles'},
     ];
+
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const HomeSectionTitle(title: 'Categories'),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Text(
+            'Categories',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+
+        const SizedBox(height: 12),
         SizedBox(
-          height: UIConstants.categoryBoxHeight + 20,
+          height: 128,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: categories.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 16),
+            separatorBuilder: (_, __) => const SizedBox(width: 20),
             itemBuilder: (context, index) {
               final cat = categories[index];
               return CategoryBox(
-                image: cat['image'] as String,
+                icon: cat['icon'] as String,
                 label: cat['label'] as String,
                 onTap: () {
                   // Navigate to product page or handle tap
@@ -43,6 +51,8 @@ class HomeCategories extends StatelessWidget {
             },
           ),
         ),
+
+
       ],
     );
   }

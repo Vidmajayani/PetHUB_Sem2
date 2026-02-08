@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import '../../../utils/ui_constants.dart';
 
 class CategoryBox extends StatelessWidget {
-  final String image;
+  final String icon; // Now used for Emoji or Hero icon
   final String label;
   final VoidCallback onTap;
 
   const CategoryBox({
     super.key,
-    required this.image,
+    required this.icon,
     required this.label,
     required this.onTap,
   });
@@ -19,51 +19,46 @@ class CategoryBox extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(UIConstants.cardCornerRadius),
-      child: Container(
-        width: UIConstants.categoryBoxWidth,
-        height: UIConstants.categoryBoxHeight,
-        padding: const EdgeInsets.all(UIConstants.spacing / 2),
-        decoration: BoxDecoration(
-          color: cs.primary.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(UIConstants.cardCornerRadius),
-          border: Border.all(color: cs.primary),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 6,
-              offset: Offset(2, 2),
+      borderRadius: BorderRadius.circular(50),
+      child: Column(
+        children: [
+          Container(
+            width: 85,
+            height: 85,
+            decoration: BoxDecoration(
+              color: const Color(0xFFD6C8F9), // Specific light purple from your request
+              shape: BoxShape.circle,
+              boxShadow: [
+
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Bigger image
-            Flexible(
-              child: Image.asset(
-                image,
-                width: UIConstants.categoryBoxWidth * 0.8, // 80% of box width
-                height:
-                    UIConstants.categoryBoxHeight * 0.6, // 60% of box height
-                fit: BoxFit.contain,
+            child: Center(
+              child: Text(
+                icon,
+                style: const TextStyle(fontSize: 48), // Increased size
               ),
             ),
-            const SizedBox(height: 16),
-            Text(
-              label,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: cs.onSurface,
-                fontSize: 20,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+
+          ),
+          const SizedBox(height: 10),
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: cs.onSurface.withOpacity(0.8),
+              fontSize: 14,
             ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
 }
+
+
