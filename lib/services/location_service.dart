@@ -27,14 +27,16 @@ class LocationService {
     return true;
   }
 
-  /// Get current position
+  /// Get current position with timeout to prevent ANR
   Future<Position?> getCurrentPosition() async {
     final hasPermission = await handlePermission();
     if (!hasPermission) return null;
 
     try {
+      // Use medium accuracy and a timeout to prevent freezing
       return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        desiredAccuracy: LocationAccuracy.medium,
+        timeLimit: const Duration(seconds: 10),
       );
     } catch (e) {
       print('❌ Location Error: $e');
