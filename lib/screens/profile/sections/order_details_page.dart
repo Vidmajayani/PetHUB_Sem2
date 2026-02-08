@@ -81,33 +81,7 @@ class OrderDetailsPage extends StatelessWidget {
                     ],
                   ),
                   
-                  const SizedBox(height: 32),
-                  
-                  // Help Section
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: colorScheme.outline.withOpacity(0.2)),
-                    ),
-                    child: Column(
-                      children: [
-                        const Icon(Icons.help_outline, color: Colors.orange),
-                        const SizedBox(height: 8),
-                        const Text(
-                          "Have questions about this order?",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pushNamed(context, '/help'),
-                          child: const Text("Visit Help Center"),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),
