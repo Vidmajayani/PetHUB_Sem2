@@ -26,15 +26,21 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     final bookingProvider = Provider.of<BookingProvider>(context);
     final authProvider = Provider.of<AuthProvider>(context);
     final notificationProvider = Provider.of<NotificationProvider>(context);
+    
+    // Determine background color based on brightness
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black;
 
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -46,7 +52,7 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
               width: 50,
               height: 5,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: isDark ? Colors.grey[700] : Colors.grey.shade300,
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
@@ -54,9 +60,13 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
           const SizedBox(height: 24),
 
           // Title
-          const Text(
+          Text(
             "Schedule Appointment",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 22, 
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
           ),
           const SizedBox(height: 8),
           
@@ -68,12 +78,12 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
 
           Text(
             "Book your session with our ${widget.service.title} expert.",
-            style: TextStyle(color: Colors.grey.shade600),
+            style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey.shade600),
           ),
           const SizedBox(height: 24),
 
           // Date Selection
-          const Text("Select Date", style: TextStyle(fontWeight: FontWeight.bold)),
+          Text("Select Date", style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
           const SizedBox(height: 12),
           InkWell(
             onTap: () async {
@@ -92,9 +102,9 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
                 builder: (context, child) {
                   return Theme(
                     data: Theme.of(context).copyWith(
-                      colorScheme: Theme.of(context).colorScheme.copyWith(
-                        onSurface: Colors.black, // Ensure dates are clearly visible
-                      ),
+                      colorScheme: isDark 
+                        ? const ColorScheme.dark(primary: Color(0xFF6C63FF), onPrimary: Colors.white, surface: Color(0xFF1E1E1E), onSurface: Colors.white)
+                        : Theme.of(context).colorScheme,
                     ),
                     child: child!,
                   );
@@ -107,8 +117,9 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(color: isDark ? Colors.grey[700]! : Colors.grey.shade300),
                 borderRadius: BorderRadius.circular(12),
+                color: isDark ? Colors.black26 : Colors.white,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -118,7 +129,9 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
                         ? "Choose a date (Tomorrow onwards)"
                         : DateFormat('EEEE, MMM d, y').format(_selectedDate!),
                     style: TextStyle(
-                      color: _selectedDate == null ? Colors.grey : Colors.black,
+                      color: _selectedDate == null 
+                          ? (isDark ? Colors.grey[500] : Colors.grey) 
+                          : textColor,
                     ),
                   ),
                   Icon(Icons.calendar_month, color: colorScheme.primary),
@@ -129,7 +142,7 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
           const SizedBox(height: 24),
 
           // Time Slots
-          const Text("Select Time Slot", style: TextStyle(fontWeight: FontWeight.bold)),
+          Text("Select Time Slot", style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
           const SizedBox(height: 12),
           Wrap(
             spacing: 12,
@@ -145,9 +158,20 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
                   });
                 },
                 selectedColor: colorScheme.primary,
+                backgroundColor: isDark ? Colors.grey[800] : Colors.grey[100],
                 labelStyle: TextStyle(
-                  color: isSelected ? Colors.white : Colors.black,
+                  color: isSelected 
+                      ? Colors.white 
+                      : (isDark ? Colors.grey[300] : Colors.black),
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(
+                    color: isSelected 
+                        ? Colors.transparent 
+                        : (isDark ? Colors.grey[700]! : Colors.grey.shade300),
+                  ),
                 ),
               );
             }).toList(),
@@ -163,6 +187,8 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
                 backgroundColor: colorScheme.primary,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                disabledBackgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
+                disabledForegroundColor: isDark ? Colors.grey[500] : Colors.grey[600],
               ),
               onPressed: (_selectedDate == null || _selectedTime == null || bookingProvider.isLoading)
                   ? null
